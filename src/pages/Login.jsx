@@ -1,38 +1,45 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../app/features/userSlice";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.user);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [touched, setTouched] = useState({});
+
+  useEffect(() => {
+    if (user) navigate("/");
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password) return;
+    if (!email || !password) {
+      setTouched({ email: true, password: true });
+      return;
+    }
     dispatch(login({ email }));
     navigate("/");
   };
 
-  const inputClass = (value) =>
+  const inputClass = (field, value) =>
     `w-full p-3 rounded bg-black border ${
-      value ? "border-[#D4AF37]" : "border-red-500"
+      touched[field] && !value ? "border-red-500" : "border-[#D4AF37]"
     } text-white placeholder:text-[#888]`;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] px-4">
       <div className="flex flex-col md:flex-row bg-[#111111] rounded-2xl shadow-2xl overflow-hidden max-w-4xl w-full">
-        {/* Left image */}
+        {/* Image */}
         <div
           className="hidden md:block md:w-1/2 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fstock.adobe.com%2Fimages%2Fabstract-gold-banner-on-black-square-mesh-design-modern-luxury-background-vector-illustration%2F135766831&psig=AOvVaw1tUzLQorfE2lQ75lj-5MUC&ust=1753953168156000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCKDqu--e5I4DFQAAAAAdAAAAABAE",
-          }}
+          style={{ backgroundImage: "url('/login.jpg')" }}
         />
         {/* Form */}
         <form
@@ -44,22 +51,22 @@ const Login = () => {
             <label className="block text-[#D4AF37] mb-1">Email</label>
             <input
               type="email"
-              className={inputClass(email)}
+              className={inputClass("email", email)}
               placeholder="Email"
               value={email}
+              onBlur={() => setTouched({ ...touched, email: true })}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
           </div>
           <div className="mb-6 relative">
             <label className="block text-[#D4AF37] mb-1">Password</label>
             <input
               type={showPassword ? "text" : "password"}
-              className={inputClass(password)}
+              className={inputClass("password", password)}
               placeholder="••••••••"
               value={password}
+              onBlur={() => setTouched({ ...touched, password: true })}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
             <div
               onClick={() => setShowPassword(!showPassword)}
