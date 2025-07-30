@@ -39,7 +39,10 @@ const Login = () => {
         {/* Image */}
         <div
           className="hidden md:block md:w-1/2 bg-cover bg-center"
-          style={{ backgroundImage: "url('/login.jpg')" }}
+          style={{
+            backgroundImage:
+              "url('https://as1.ftcdn.net/jpg/01/35/76/68/1000_F_135766831_buzwzScCj29YeJAtkazJOKpvmscKYq8z.jpg')",
+          }}
         />
         {/* Form */}
         <form
